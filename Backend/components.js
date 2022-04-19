@@ -77,3 +77,28 @@ exports.deleteData=(destId,res)=>{
     .then(res=>{console.log("Deleted")})
     .catch(err=>{console.log(err)}))
 }
+
+exports.addUser=(req,res)=>{
+    const db = getdb();
+    const formData = req;
+    return  (db.collection(formData.auth)
+            .insertOne({   
+                auth:formData.auth,
+                username:formData.username,
+                name:formData.name,
+                password:formData.password,
+                key:formData.key
+            })
+            .then(res=>{console.log(res)})
+            .catch(err=>{console.log(err)}))                                            
+}
+
+exports.getUser=(req,res)=>{
+    const db = getdb();
+
+    return  (db.collection(formData.auth)
+            .find({username:req.username,password:req.password,key:req.key})
+            .toArray()
+            .then(res=>{return res;})
+            .catch(err=>{console.log(err)}))                                            
+}

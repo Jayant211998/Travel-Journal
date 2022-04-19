@@ -20,7 +20,7 @@ app.use(bodyParser.json())
 
 app.post('/addData',async(req,res,next)=>{
     const addData = await components.addData(req.body.data,res)
-    return res.json({message:addData})
+     res.status(200).send({message:"Data Added"})
 })
 app.get('/getAllData',async(req,res,next)=>{
     try{const allData = await components.getAllData(req,res)
@@ -40,14 +40,23 @@ app.get('/getDataById/:id',async(req,res,next)=>{
 })
 app.post('/upadateData/:id',async(req,res,next)=>{
     const upadateData = await components.upadateData(req.params.id,req.body.data,res)
-    return res.json({message:upadateData})
+    res.status(200).send({message:upadateData})
 })
 app.delete('/deleteData/:id',async(req,res,next)=>{
     const deleteData = await components.deleteData(req.params.id,res)
-    return res.json({message:"deleted"})
+    res.status(200).send({message:"deleted"})
+})
+
+app.post('/register',async(req,res)=>{
+    const addUser = await components.addUser(req.body.data,res)
+     res.status(200).send({message:"User Added"})
+})
+app.post('/login',async(req,res)=>{
+    const getUser = await components.getUser(req.body.data,res)
+    res.status(200).send(getUser)
 })
 
 mongoconnect.mongoConnect(()=>{
     app.listen(3001,()=>{console.log("Server Running at port 3001")})
 
-}) 
+})  
