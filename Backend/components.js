@@ -96,7 +96,7 @@ exports.addUser=(req,res)=>{
 exports.getUser=(req,res)=>{
     const db = getdb();
 
-    return  (db.collection(formData.auth)
+    return  (db.collection(req.auth)
             .find({username:req.username,password:req.password,key:req.key})
             .toArray()
             .then(res=>{return res;})

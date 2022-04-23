@@ -1,13 +1,22 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 // const multer = require('multer')
-
+const dotenv = require('dotenv'); 
+var cors = require('cors');
+const uuid = require('uuid');
+const crypto = require("crypto");
 const fs = require('fs')
-const app = express();
+
 
 const components = require('./components')
 const mongoconnect = require('./database')
 
+
+const app = express();
+app.use(cors());
+dotenv.config();
+app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.json())
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -15,8 +24,21 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
-app.use(bodyParser.urlencoded({extended:true}))
-app.use(bodyParser.json())
+
+
+const privateKey = "private_BDpLAeeg/iTxwkBBeAFOy8fWS1M=";
+app.get("/auth", function(req, res) {
+    var token = req.query.token || uuid.v4();
+    var expire = req.query.expire || parseInt(Date.now()/1000)+2400;
+    var privateAPIKey = `${privateKey}`;
+    var signature = crypto.createHmac('sha1', privateAPIKey).update(token+expire).digest('hex');
+    res.status(200);
+    res.send({
+        token : token,
+        expire : expire,
+        signature : signature
+    });
+});
 
 app.post('/addData',async(req,res,next)=>{
     const addData = await components.addData(req.body.data,res)
